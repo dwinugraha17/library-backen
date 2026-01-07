@@ -50,4 +50,37 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Scope a query to only include users of a given role.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $role
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRole($query, string $role)
+    {
+        return $query->where('role', $role);
+    }
+
+    /**
+     * Get the profile photo URL.
+     *
+     * @param  string|null  $value
+     * @return string|null
+     */
+    public function getProfilePhotoAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+
+        // Check if the value is already a complete URL (legacy support)
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return $value;
+        }
+
+        // Return the full URL for the storage path
+        return url('storage/' . $value);
+    }
 }

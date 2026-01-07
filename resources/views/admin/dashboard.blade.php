@@ -1,37 +1,84 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - UNILAM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">UNILAM Admin</a>
+            <form action="{{ route('admin.logout') }}" method="POST" class="d-flex">
+                @csrf
+                <button class="btn btn-outline-danger btn-sm" type="submit">Logout</button>
+            </form>
+        </div>
+    </nav>
 
-@section('content')
-<div class="container-fluid">
-    <h2 class="mb-4">Dashboard Overview</h2>
-    
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card card-custom bg-primary text-white p-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Buku</h5>
-                    <p class="card-text display-4 fw-bold">{{ $totalBooks }}</p>
-                    <i class="fas fa-book fa-3x position-absolute end-0 bottom-0 m-3 opacity-25"></i>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Daftar Pengguna ({{ $users->count() }})</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Nama</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>No. HP</th>
+                                        <th>Bergabung</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($users as $user)
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                @if($user->profile_photo)
+                                                    <img src="{{ $user->profile_photo }}" class="rounded-circle me-2" width="30" height="30" style="object-fit:cover">
+                                                @else
+                                                    <div class="rounded-circle bg-secondary text-white me-2 d-flex align-items-center justify-content-center" style="width:30px; height:30px; font-size: 12px;">
+                                                        {{ substr($user->name, 0, 1) }}
+                                                    </div>
+                                                @endif
+                                                {{ $user->name }}
+                                            </div>
+                                        </td>
+                                        <td>{{ $user->email }}</td>
+                                        <td>
+                                            <span class="badge {{ $user->role == 'admin' ? 'bg-success' : 'bg-secondary' }}">
+                                                {{ $user->role }}
+                                            </span>
+                                        </td>
+                                        <td>{{ $user->phone_number }}</td>
+                                        <td>{{ $user->created_at->format('d M Y') }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card card-custom bg-success text-white p-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Pengguna</h5>
-                    <p class="card-text display-4 fw-bold">{{ $totalUsers }}</p>
-                    <i class="fas fa-users fa-3x position-absolute end-0 bottom-0 m-3 opacity-25"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card card-custom bg-warning text-dark p-3">
-                <div class="card-body">
-                    <h5 class="card-title">Peminjaman Aktif</h5>
-                    <p class="card-text display-4 fw-bold">{{ $activeBorrows }}</p>
-                    <i class="fas fa-exchange-alt fa-3x position-absolute end-0 bottom-0 m-3 opacity-25"></i>
+            
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Daftar Buku (Coming Soon)</h5>
+                    </div>
+                    <div class="card-body">
+                         <p class="text-muted">Fitur manajemen buku akan ditampilkan di sini.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-@endsection
+</body>
+</html>

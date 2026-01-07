@@ -35,6 +35,11 @@
                     <i class="fas fa-book me-2"></i> Manajemen Buku
                 </a>
             </li>
+            <li>
+                <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                    <i class="fas fa-users me-2"></i> Manajemen User
+                </a>
+            </li>
         </ul>
         <hr>
         <form action="{{ route('logout') }}" method="POST">
