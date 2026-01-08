@@ -25,16 +25,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Book::create([
-            'title' => 'Flutter for Beginners',
-            'author' => 'Google Developers',
-            'description' => 'Learn Flutter from scratch with this comprehensive guide.',
-            'category' => 'Technology',
-            'stock' => 10,
-            'cover_image' => 'https://via.placeholder.com/150',
-            'status' => 'Available',
-        ]);
-
-        Book::create([
             'title' => 'Laravel Architectural Patterns',
             'author' => 'Taylor Otwell',
             'description' => 'A deep dive into Laravel internals and design patterns.',
