@@ -16,8 +16,8 @@ Route::prefix('simple-admin')->group(function () {
     Route::post('/login', [SimpleAdminController::class, 'login']);
 
     Route::middleware(['auth'])->group(function () {
-        Route::get('/dashboard', [SimpleAdminController::class, 'dashboard'])->name('admin.dashboard');
-        Route::post('/logout', [SimpleAdminController::class, 'logout'])->name('admin.logout');
+        Route::get('/dashboard', [SimpleAdminController::class, 'dashboard'])->name('simple.dashboard');
+        Route::post('/logout', [SimpleAdminController::class, 'logout'])->name('simple.logout');
     });
 });
 

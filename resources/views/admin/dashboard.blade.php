@@ -1,84 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - UNILAM</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">UNILAM Admin</a>
-            <form action="{{ route('admin.logout') }}" method="POST" class="d-flex">
-                @csrf
-                <button class="btn btn-outline-danger btn-sm" type="submit">Logout</button>
-            </form>
-        </div>
-    </nav>
+@extends('layouts.app')
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-12 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Daftar Pengguna ({{ $users->count() }})</h5>
+@section('content')
+<div class="container-fluid">
+    <h2 class="mb-4">Dashboard Overview</h2>
+
+    <div class="row g-4">
+        <!-- Card Total Books -->
+        <div class="col-md-4">
+            <div class="card card-custom p-3 bg-primary text-white h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Total Buku</h6>
+                        <h2 class="mb-0 fw-bold">{{ $totalBooks }}</h2>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-striped mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Nama</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
-                                        <th>No. HP</th>
-                                        <th>Bergabung</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($users as $user)
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                @if($user->profile_photo)
-                                                    <img src="{{ $user->profile_photo }}" class="rounded-circle me-2" width="30" height="30" style="object-fit:cover">
-                                                @else
-                                                    <div class="rounded-circle bg-secondary text-white me-2 d-flex align-items-center justify-content-center" style="width:30px; height:30px; font-size: 12px;">
-                                                        {{ substr($user->name, 0, 1) }}
-                                                    </div>
-                                                @endif
-                                                {{ $user->name }}
-                                            </div>
-                                        </td>
-                                        <td>{{ $user->email }}</td>
-                                        <td>
-                                            <span class="badge {{ $user->role == 'admin' ? 'bg-success' : 'bg-secondary' }}">
-                                                {{ $user->role }}
-                                            </span>
-                                        </td>
-                                        <td>{{ $user->phone_number }}</td>
-                                        <td>{{ $user->created_at->format('d M Y') }}</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="fs-1 opacity-50">
+                        <i class="fas fa-book"></i>
                     </div>
                 </div>
+                <div class="mt-3">
+                    <a href="{{ route('admin.books.index') }}" class="text-white text-decoration-none small">
+                        Lihat Detail <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
             </div>
-            
-            <div class="col-md-12">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Daftar Buku (Coming Soon)</h5>
+        </div>
+
+        <!-- Card Total Users -->
+        <div class="col-md-4">
+            <div class="card card-custom p-3 bg-success text-white h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Total User</h6>
+                        <h2 class="mb-0 fw-bold">{{ $totalUsers }}</h2>
                     </div>
-                    <div class="card-body">
-                         <p class="text-muted">Fitur manajemen buku akan ditampilkan di sini.</p>
+                    <div class="fs-1 opacity-50">
+                        <i class="fas fa-users"></i>
                     </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ route('admin.users.index') }}" class="text-white text-decoration-none small">
+                        Lihat Detail <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Active Borrows -->
+        <div class="col-md-4">
+            <div class="card card-custom p-3 bg-warning text-white h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Peminjaman Aktif</h6>
+                        <h2 class="mb-0 fw-bold">{{ $activeBorrows }}</h2>
+                    </div>
+                    <div class="fs-1 opacity-50">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <!-- Note: Route for borrowings index might not exist yet, so we use '#' or create it later -->
+                    <a href="#" class="text-white text-decoration-none small">
+                        Lihat Detail <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-</body>
-</html>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="card card-custom">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">Selamat Datang, Admin!</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Gunakan menu di sebelah kiri untuk mengelola data buku dan pengguna aplikasi perpustakaan.
+                        Pastikan untuk selalu memperbarui stok buku dan memantau status peminjaman.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

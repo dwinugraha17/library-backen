@@ -25,7 +25,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/',
+            'password' => 'required|string|min:6|confirmed',
             'phone_number' => 'required|string|max:15',
         ]);
 
@@ -36,7 +36,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
             'phone_number' => $request->phone_number,
             'role' => 'user',
         ]);
@@ -169,5 +169,18 @@ class AuthController extends Controller
         $user->refresh(); // Ambil data terbaru dari DB
 
         return response()->json(['user' => $user]);
+    }
+
+    public function deleteAccount(Request $request)
+    {
+        $user = $request->user();
+        
+        // Revoke all tokens
+        $user->tokens()->delete();
+        
+        // Delete user
+        $user->delete();
+
+        return response()->json(['message' => 'Account deleted successfully']);
     }
 }

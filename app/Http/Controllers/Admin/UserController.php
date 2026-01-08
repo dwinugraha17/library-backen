@@ -47,7 +47,7 @@ class UserController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
             'phone_number' => $request->phone_number,
             'role' => $request->role,
         ]);
@@ -96,7 +96,7 @@ class UserController extends Controller
         ]);
 
         if ($request->filled('password')) {
-            $user->update(['password' => Hash::make($request->password)]);
+            $user->update(['password' => $request->password]);
         }
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');

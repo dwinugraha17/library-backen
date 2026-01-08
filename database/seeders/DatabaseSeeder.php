@@ -14,10 +14,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(AdminSetupSeeder::class);
+
         User::create([
             'name' => 'Admin Unilam',
             'email' => 'admin@unilam.ac.id',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'role' => 'admin',
             'phone_number' => '6285178093168',
         ]);
