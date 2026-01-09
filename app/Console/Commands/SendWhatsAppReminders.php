@@ -6,6 +6,8 @@ use App\Models\Borrowing;
 use App\Services\FonnteService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BookReturnReminder;
 
 class SendWhatsAppReminders extends Command
 {
@@ -27,6 +29,7 @@ class SendWhatsAppReminders extends Command
                 ->get();
 
             foreach ($borrowings as $borrow) {
+                // WhatsApp Reminder
                 $message = "Halo {$borrow->user->name},\n\n" 
                     . "Ini adalah pengingat ({$rem['label']}) untuk mengembalikan buku:\n" 
                     . "*{$borrow->book->title}*\n\n" 
@@ -41,6 +44,18 @@ class SendWhatsAppReminders extends Command
                 } else {
                     $this->error("Failed to send reminder to {$borrow->user->name}");
                     \Illuminate\Support\Facades\Log::error("WA Reminder Failed: To {$borrow->user->name}. Reason: " . json_encode($response));
+                }
+
+                // Email Reminder
+                if ($borrow->user->email) {
+                    try {
+                        Mail::to($borrow->user->email)->send(new BookReturnReminder($borrow, $rem['label']));
+                        $this->info("Email reminder sent to {$borrow->user->name} ({$borrow->user->email})");
+                        \Illuminate\Support\Facades\Log::info("Email Reminder Sent: To {$borrow->user->email}");
+                    } catch (\Exception $e) {
+                        $this->error("Failed to send email to {$borrow->user->name}");
+                        \Illuminate\Support\Facades\Log::error("Email Reminder Failed: To {$borrow->user->email}. Reason: " . $e->getMessage());
+                    }
                 }
             }
         }
