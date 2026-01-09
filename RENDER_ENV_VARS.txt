@@ -1,0 +1,26 @@
+DAFTAR ENVIRONMENT VARIABLE UNTUK RENDER
+========================================
+Silakan copy-paste nilai di bawah ini ke menu "Environment Variables" di Dashboard Render Web Service Anda.
+
+1. APP_KEY
+   Value: (Buka file .env di laptop Anda, salin nilai APP_KEY sepenuhnya. Contoh: base64:AbCdEfG...)
+
+2. APP_ENV
+   Value: production
+
+3. APP_DEBUG
+   Value: false
+
+4. DB_CONNECTION
+   Value: pgsql
+
+5. DATABASE_URL
+   Value: (Copy dari "Internal Database URL" milik Database PostgreSQL yang sudah Anda buat di Render)
+
+6. PORT
+   Value: 80
+
+----------------------------------------
+CATATAN PENTING:
+- Jangan masukkan DB_HOST, DB_USERNAME, DB_PASSWORD secara terpisah. Cukup 'DATABASE_URL' saja.
+- Pastikan tidak ada spasi tambahan saat copy-paste.

@@ -36,14 +36,17 @@ class SendWhatsAppReminders extends Command
                     . "Batas waktu pengembalian adalah: " . Carbon::parse($borrow->return_date)->format('d M Y') . ".\n" 
                     . "Terima kasih telah menggunakan UNILAM Library.";
 
+                $this->info("Attempting to send WhatsApp reminder to {$borrow->user->name} at {$borrow->user->phone_number} for {$borrow->book->title}");
+                \Illuminate\Support\Facades\Log::info("Attempting WA Reminder: To {$borrow->user->name} ({$borrow->user->phone_number}) for {$borrow->book->title}");
+
                 $response = $fonnte->sendMessage($borrow->user->phone_number, $message);
-                
+
                 if (isset($response['status']) && $response['status']) {
                     $this->info("Reminder sent to {$borrow->user->name} for {$borrow->book->title}");
                     \Illuminate\Support\Facades\Log::info("WA Reminder Sent: To {$borrow->user->name} ({$borrow->user->phone_number})");
                 } else {
-                    $this->error("Failed to send reminder to {$borrow->user->name}");
-                    \Illuminate\Support\Facades\Log::error("WA Reminder Failed: To {$borrow->user->name}. Reason: " . json_encode($response));
+                    $this->warn("Failed to send WhatsApp reminder to {$borrow->user->name}, but email will still be sent"); // Mengganti dari error menjadi warning
+                    \Illuminate\Support\Facades\Log::warning("WA Reminder Failed: To {$borrow->user->name}. Reason: " . json_encode($response)); // Mengganti dari error menjadi warning
                 }
 
                 // Email Reminder
