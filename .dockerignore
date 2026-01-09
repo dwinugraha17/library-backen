@@ -1,0 +1,15 @@
+/vendor
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+.env
+.env.example
+.git
+.gitignore
+.gitattributes
+Dockerfile
+render.yaml
+README.md
+tests
+phpunit.xml
