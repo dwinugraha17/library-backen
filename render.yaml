@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: unilam-backend
+    env: php
+    region: singapore # Optional: Pilih region terdekat (misal: singapore, oregon, frankfurt)
+    plan: free # Menggunakan tier free
+    buildCommand: composer install --no-dev --optimize-autoloader && npm install && npm run build
+    startCommand: php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_DEBUG
+        value: false
+      - key: APP_ENV
+        value: production
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: unilam-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: unilam-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: unilam-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: unilam-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: unilam-db
+          property: password
+
+databases:
+  - name: unilam-db
+    databaseName: unilam_db
+    user: unilam_user
+    plan: free # Menggunakan tier free
+    region: singapore
