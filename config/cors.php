@@ -15,17 +15,19 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['*'],
 
     'allowed_methods' => ['*'],
 
     'allowed_origins' => ['*'],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '.*', // Allow all origins including IP addresses
+    ],
 
-    'allowed_headers' => ['*', 'ngrok-skip-browser-warning', 'Authorization', 'Content-Type', 'X-Requested-With'],
+    'allowed_headers' => ['*', 'ngrok-skip-browser-warning', 'Authorization', 'Content-Type', 'X-Requested-With', 'Accept', 'X-CSRF-TOKEN', 'X-Requested-With', 'Set-Cookie'],
 
-    'exposed_headers' => [],
+    'exposed_headers' => ['*'],
 
     'max_age' => 0,
 

@@ -28,7 +28,7 @@ class TestFonnteApi extends Command
     {
         $this->info('Testing Fonnte API connection...');
 
-        $target = '6285888138219'; // nomor maman
+        $target = '6281224607822'; // nomor 
         $message = 'Test message: Sistem pengingat buku UNILAM Library berfungsi dengan baik.';
 
         $this->info("Sending test message to: {$target}");

@@ -9,12 +9,13 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libonig-dev \
     libpq-dev \
+    libicu-dev \
     zip \
     unzip \
     git \
     curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd zip
+    && docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd zip intl
 
 # Aktifkan mod_rewrite Apache untuk URL rewriting Laravel
 RUN a2enmod rewrite

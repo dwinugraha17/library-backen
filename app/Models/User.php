@@ -63,6 +63,11 @@ class User extends Authenticatable
         return $query->where('role', $role);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
     /**
      * Get the profile photo URL.
      *

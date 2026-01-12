@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\BorrowController;
+use App\Http\Controllers\Api\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -20,6 +21,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/borrow', [BorrowController::class, 'borrow']);
     Route::get('/history', [BorrowController::class, 'history']);
     Route::post('/return/{borrowing}', [BorrowController::class, 'returnBook']);
+
+    Route::post('/books/{book}/reviews', [ReviewController::class, 'store']);
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
 
     // Admin only (simplified check)
     Route::middleware('can:admin-access')->group(function () {

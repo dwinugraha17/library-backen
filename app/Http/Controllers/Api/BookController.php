@@ -49,6 +49,11 @@ class BookController extends Controller
 
     public function show(Book $book)
     {
+        $book->load(['reviews' => function($query) {
+            $query->orderBy('created_at', 'desc');
+        }, 'reviews.user:id,name,profile_photo']);
+        
+        $book->average_rating = $book->reviews()->avg('rating');
         return response()->json($book);
     }
 
