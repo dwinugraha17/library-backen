@@ -109,9 +109,6 @@ sleep 5
 echo "Running database migrations..."
 php artisan migrate --force || echo "WARNING: Database migration failed. Check your DB credentials."
 
-echo "Running database seeder..."
-php artisan db:seed --force || echo "WARNING: Database seeding failed (this is expected if data already exists)."
-
 echo "Clearing caches..."
 php artisan config:clear
 php artisan cache:clear
