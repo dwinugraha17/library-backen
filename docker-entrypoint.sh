@@ -3,9 +3,11 @@ set -e
 
 echo "Starting deployment script..."
 
-# Fix MPM conflicts (prevent apache crash on start)
-rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf
-rm -f /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf
+# Fix Permissions & Create Storage folders (Runtime Check)
+echo "Fixing storage permissions..."
+mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
 
 # Generate APP_KEY if not set
 if [ -z "$APP_KEY" ]; then
