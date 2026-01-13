@@ -20,8 +20,10 @@ RUN apt-get update && apt-get install -y \
 # Aktifkan mod_rewrite Apache untuk URL rewriting Laravel
 RUN a2enmod rewrite
 
-# Fix: Pastikan hanya satu MPM yang dimuat (prefork untuk PHP module)
-RUN a2dismod mpm_event && a2enmod mpm_prefork
+# Fix: Hapus konfigurasi MPM lama yang bentrok secara manual
+RUN rm -f /etc/apache2/mods-enabled/mpm_*.load \
+    && rm -f /etc/apache2/mods-enabled/mpm_*.conf \
+    && a2enmod mpm_prefork
 
 # Ubah document root Apache ke folder public Laravel
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
