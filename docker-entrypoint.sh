@@ -10,7 +10,7 @@ if [ -z "$DB_HOST" ]; then
     
     # Check for MySQL (Railway MySQL Plugin)
     if [ -n "$MYSQLHOST" ]; then
-        echo "Detected Railway MySQL configuration."
+        echo "Detected Railway MySQL configuration (Variables)."
         export DB_CONNECTION=mysql
         export DB_HOST="$MYSQLHOST"
         export DB_PORT="$MYSQLPORT"
@@ -18,7 +18,40 @@ if [ -z "$DB_HOST" ]; then
         export DB_USERNAME="$MYSQLUSER"
         export DB_PASSWORD="$MYSQLPASSWORD"
     
-    # Check for PostgreSQL (Railway PostgreSQL Plugin)
+    # Check for DATABASE_URL (Generic or Railway)
+    elif [ -n "$DATABASE_URL" ] || [ -n "$MYSQL_URL" ]; then
+        echo "Detected Connection URL. Parsing..."
+        
+        # Use DATABASE_URL or MYSQL_URL
+        target_url="${DATABASE_URL:-$MYSQL_URL}"
+        
+        # Parse URL using basic string manipulation (assuming standard format: scheme://user:pass@host:port/path)
+        # Remove scheme (mysql:// or postgres://)
+        proto="$(echo $target_url | grep :// | sed -e's,^\(.*://\).*,\1,g')"
+        url="${target_url#$proto}"
+        
+        # Extract User and Password
+        userpass="$(echo $url | grep @ | cut -d@ -f1)"
+        export DB_USERNAME="$(echo $userpass | grep : | cut -d: -f1)"
+        export DB_PASSWORD="$(echo $userpass | grep : | cut -d: -f2)"
+        
+        # Extract Host and Port
+        hostport="$(echo $url | sed -e s,$userpass@,,g | cut -d/ -f1)"
+        export DB_HOST="$(echo $hostport | grep : | cut -d: -f1)"
+        export DB_PORT="$(echo $hostport | grep : | cut -d: -f2)"
+        
+        # Extract Database Name (remove query params if any)
+        dbname="$(echo $url | grep / | cut -d/ -f2- | cut -d? -f1)"
+        export DB_DATABASE="$dbname"
+        
+        # Set Connection Type
+        if [[ "$target_url" == *"postgres"* ]]; then
+             export DB_CONNECTION=pgsql
+        else
+             export DB_CONNECTION=mysql
+        fi
+        
+    # Check for PostgreSQL (Railway PostgreSQL Plugin - Variables)
     elif [ -n "$PGHOST" ]; then
         echo "Detected Railway PostgreSQL configuration."
         export DB_CONNECTION=pgsql
