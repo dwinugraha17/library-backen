@@ -61,6 +61,9 @@ RUN mkdir -p storage/framework/cache/data \
 # Expose port
 EXPOSE 80
 
-# CMD: Bersihkan MPM yang bentrok di runtime, lalu start
-# Kita menghapus mpm_event dan mpm_worker secara paksa sebelum start
-CMD sh -c "rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf && php artisan migrate --force && apache2-foreground"
+# CMD: Fix MPM, Generate Key if missing, Migrate, Update Apache Port, and Start
+CMD sh -c "rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf && \
+    if [ -z \"\$APP_KEY\" ]; then php artisan key:generate; fi && \
+    php artisan migrate --force && \
+    sed -i \"s/80/\$PORT/g\" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf && \
+    apache2-foreground"
