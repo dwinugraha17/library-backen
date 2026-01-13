@@ -38,8 +38,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy semua file project
 COPY . .
 
+# Buat file .env dari example agar composer tidak error
+RUN cp .env.example .env
+
 # Install dependensi PHP (Production)
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Install dependensi JS dan build assets
 RUN npm install && npm run build
