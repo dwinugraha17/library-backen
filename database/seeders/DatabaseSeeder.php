@@ -16,13 +16,15 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(AdminSetupSeeder::class);
 
-        User::create([
-            'name' => 'Admin Unilam',
-            'email' => 'admin@unilam.ac.id',
-            'password' => 'password',
-            'role' => 'admin',
-            'phone_number' => '6285178093168',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@unilam.ac.id'],
+            [
+                'name' => 'Admin Unilam',
+                'password' => 'password',
+                'role' => 'admin',
+                'phone_number' => '6285178093168',
+            ]
+        );
 
         Book::create([
             'title' => 'Laravel Architectural Patterns',
