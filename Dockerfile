@@ -47,8 +47,12 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 # Install dependensi JS dan build assets
 RUN npm install && npm run build
 
-# Berikan hak akses ke folder storage dan cache
-RUN chown -R www-data:www-data storage bootstrap/cache
+# Buat folder storage yang hilang dan berikan hak akses
+RUN mkdir -p storage/framework/cache/data \
+    && mkdir -p storage/framework/sessions \
+    && mkdir -p storage/framework/views \
+    && mkdir -p storage/logs \
+    && chown -R www-data:www-data storage bootstrap/cache
 
 # Expose port 80 (default Apache)
 EXPOSE 80
