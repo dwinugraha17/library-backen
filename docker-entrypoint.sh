@@ -29,6 +29,9 @@ sed -i "s/<VirtualHost \*:80>/<VirtualHost *:$PORT>/g" /etc/apache2/sites-availa
 sed -i "s/<VirtualHost \*:8080>/<VirtualHost *:$PORT>/g" /etc/apache2/sites-available/000-default.conf
 
 # Run Migrations
+echo "Waiting for database connection stability (10s)..."
+sleep 10
+
 echo "Running database migrations..."
 php artisan migrate --force || echo "WARNING: Database migration failed, but starting server anyway..."
 
