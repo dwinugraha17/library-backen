@@ -27,7 +27,7 @@ sed -i "s/<VirtualHost \*:80>/<VirtualHost *:$PORT>/g" /etc/apache2/sites-availa
 
 # Run Migrations
 echo "Running database migrations..."
-php artisan migrate --force
+php artisan migrate --force || echo "WARNING: Database migration failed, but starting server anyway..."
 
 echo "Starting Apache..."
 exec apache2-foreground
