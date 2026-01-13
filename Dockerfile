@@ -62,7 +62,9 @@ RUN mkdir -p storage/framework/cache/data \
 
 # Copy entrypoint script and make executable
 COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN apt-get update && apt-get install -y dos2unix \
+    && dos2unix /usr/local/bin/docker-entrypoint.sh \
+    && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Expose port
 EXPOSE 80
