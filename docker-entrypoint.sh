@@ -3,6 +3,37 @@ set -e
 
 echo "Starting deployment script..."
 
+# Auto-detect Railway Database Variables and map to Laravel DB_* vars
+# This allows "zero-config" connection if using Railway's default plugins.
+if [ -z "$DB_HOST" ]; then
+    echo "DB_HOST not set. Attempting to auto-detect Railway database..."
+    
+    # Check for MySQL (Railway MySQL Plugin)
+    if [ -n "$MYSQLHOST" ]; then
+        echo "Detected Railway MySQL configuration."
+        export DB_CONNECTION=mysql
+        export DB_HOST="$MYSQLHOST"
+        export DB_PORT="$MYSQLPORT"
+        export DB_DATABASE="$MYSQLDATABASE"
+        export DB_USERNAME="$MYSQLUSER"
+        export DB_PASSWORD="$MYSQLPASSWORD"
+    
+    # Check for PostgreSQL (Railway PostgreSQL Plugin)
+    elif [ -n "$PGHOST" ]; then
+        echo "Detected Railway PostgreSQL configuration."
+        export DB_CONNECTION=pgsql
+        export DB_HOST="$PGHOST"
+        export DB_PORT="$PGPORT"
+        export DB_DATABASE="$PGDATABASE"
+        export DB_USERNAME="$PGUSER"
+        export DB_PASSWORD="$PGPASSWORD"
+    else
+        echo "No standard Railway database variables found. Using defaults."
+    fi
+else
+    echo "DB_HOST is already set. Skipping auto-detection."
+fi
+
 # Fix Permissions & Create Storage folders (Runtime Check)
 echo "Fixing storage permissions..."
 mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
@@ -12,10 +43,8 @@ chmod -R 775 storage bootstrap/cache
 # Generate APP_KEY if not set
 if [ -z "$APP_KEY" ]; then
     echo "APP_KEY is missing. Generating..."
+    cp .env.example .env
     php artisan key:generate
-    # Reload env if necessary, though artisan modifies .env file usually, 
-    # but in Docker .env might be ephemeral or read once.
-    # ideally we want to export it for this session if artisan doesn't set it in env vars.
 fi
 
 # Configure Apache to listen on Railway's PORT
@@ -30,17 +59,22 @@ echo "Listen $PORT" > /etc/apache2/ports.conf
 sed -i "s/<VirtualHost \*:80>/<VirtualHost *:$PORT>/g" /etc/apache2/sites-available/000-default.conf
 sed -i "s/<VirtualHost \*:8080>/<VirtualHost *:$PORT>/g" /etc/apache2/sites-available/000-default.conf
 
+# Create storage link
+echo "Creating storage link..."
+php artisan storage:link || true
+
 # Run Migrations
-echo "Waiting for database connection stability (10s)..."
-sleep 10
+echo "Waiting for database connection stability (5s)..."
+sleep 5
 
 echo "Running database migrations..."
-php artisan migrate --force || echo "WARNING: Database migration failed, but starting server anyway..."
+php artisan migrate --force || echo "WARNING: Database migration failed. Check your DB credentials."
 
 echo "Clearing caches..."
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
+php artisan route:clear
 
 echo "Starting Apache on PORT $PORT..."
 exec apache2-foreground
