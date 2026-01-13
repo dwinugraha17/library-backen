@@ -34,6 +34,12 @@ else
     echo "DB_HOST is already set. Skipping auto-detection."
 fi
 
+echo "--- Database Configuration ---"
+echo "DB_CONNECTION: $DB_CONNECTION"
+echo "DB_HOST: $DB_HOST"
+echo "DB_PORT: $DB_PORT"
+echo "------------------------------"
+
 # Fix Permissions & Create Storage folders (Runtime Check)
 echo "Fixing storage permissions..."
 mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
