@@ -32,16 +32,16 @@ if [ -z "$DB_HOST" ]; then
         
         # Extract User and Password
         userpass="$(echo $url | grep @ | cut -d@ -f1)"
-        export DB_USERNAME="$(echo $userpass | grep : | cut -d: -f1)"
-        export DB_PASSWORD="$(echo $userpass | grep : | cut -d: -f2)"
+        export DB_USERNAME="$(echo $userpass | grep : | cut -d: -f1 | tr -d '[:space:]')"
+        export DB_PASSWORD="$(echo $userpass | grep : | cut -d: -f2 | tr -d '[:space:]')"
         
         # Extract Host and Port
         hostport="$(echo $url | sed -e s,$userpass@,,g | cut -d/ -f1)"
-        export DB_HOST="$(echo $hostport | grep : | cut -d: -f1)"
-        export DB_PORT="$(echo $hostport | grep : | cut -d: -f2)"
+        export DB_HOST="$(echo $hostport | grep : | cut -d: -f1 | tr -d '[:space:]')"
+        export DB_PORT="$(echo $hostport | grep : | cut -d: -f2 | tr -d '[:space:]')"
         
         # Extract Database Name (remove query params if any)
-        dbname="$(echo $url | grep / | cut -d/ -f2- | cut -d? -f1)"
+        dbname="$(echo $url | grep / | cut -d/ -f2- | cut -d? -f1 | tr -d '[:space:]')"
         export DB_DATABASE="$dbname"
         
         # Set Connection Type
