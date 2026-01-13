@@ -46,6 +46,8 @@ COPY . .
 RUN cp .env.example .env
 
 # Install PHP Dependencies
+# Force remove composer.lock to ensure fresh resolution for PHP 8.4
+RUN rm -f composer.lock
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Install JS Dependencies & Build
