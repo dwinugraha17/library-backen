@@ -115,5 +115,4 @@ php artisan cache:clear
 php artisan view:clear
 php artisan route:clear
 
-echo "Starting Apache on PORT $PORT..."
-exec apache2-foreground
+echo "Entrypoint script finished. Supervisor will now start Nginx and PHP-FPM."
