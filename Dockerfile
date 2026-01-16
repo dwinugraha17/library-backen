@@ -20,8 +20,10 @@ RUN apt-get update && apt-get install -y \
 # Aktifkan mod_rewrite
 RUN a2enmod rewrite
 
-# Fix MPM Conflict: Pastikan hanya satu MPM (prefork) yang aktif
-RUN a2dismod mpm_event && a2dismod mpm_worker && a2enmod mpm_prefork
+# Fix MPM Conflict: Forcefully remove conflicting MPMs to ensure only prefork is loaded
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf \
+          /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf \
+    && a2enmod mpm_prefork
 
 
 # Ubah document root ke public
