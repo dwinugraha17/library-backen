@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        
         Book::create([
             'title' => 'Laravel Architectural Patterns',
             'author' => 'Taylor Otwell',

@@ -80,12 +80,20 @@ class User extends Authenticatable
             return null;
         }
 
-        // Check if the value is already a complete URL (legacy support)
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
+        // If the value is already a data URI, return it as is.
+        if (str_starts_with($value, 'data:image')) {
             return $value;
         }
 
-        // Return the full URL for the storage path
-        return url('storage/' . $value);
+        $path = storage_path('app/public/' . $value);
+
+        if (!file_exists($path)) {
+            return null;
+        }
+
+        $type = mime_content_type($path);
+        $data = file_get_contents($path);
+
+        return 'data:' . $type . ';base64,' . base64_encode($data);
     }
 }

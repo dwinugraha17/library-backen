@@ -21,16 +21,14 @@ return [
 
     'allowed_origins' => ['*'],
 
-    'allowed_origins_patterns' => [
-        '.*', // Allow all origins including IP addresses
-    ],
+    'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*', 'ngrok-skip-browser-warning', 'Authorization', 'Content-Type', 'X-Requested-With', 'Accept', 'X-CSRF-TOKEN', 'X-Requested-With', 'Set-Cookie'],
+    'allowed_headers' => ['*'],
 
-    'exposed_headers' => ['*'],
+    'exposed_headers' => [],
 
     'max_age' => 0,
 
-    'supports_credentials' => false, // Set false jika allowed_origins = '*'
+    'supports_credentials' => true,
 
 ];
