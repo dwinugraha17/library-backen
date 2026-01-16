@@ -86,17 +86,7 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate
 fi
 
-# Configure Apache to listen on Railway's PORT
-# Railway injects $PORT (e.g., 6543)
-PORT=${PORT:-80}
-echo "Configuring Apache to listen on port $PORT..."
 
-# Update ports.conf to listen on the correct port
-echo "Listen $PORT" > /etc/apache2/ports.conf
-
-# Update the default virtual host configuration
-sed -i "s/<VirtualHost \*:80>/<VirtualHost *:$PORT>/g" /etc/apache2/sites-available/000-default.conf
-sed -i "s/<VirtualHost \*:8080>/<VirtualHost *:$PORT>/g" /etc/apache2/sites-available/000-default.conf
 
 # Create storage link
 echo "Creating storage link..."
