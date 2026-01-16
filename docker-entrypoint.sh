@@ -99,10 +99,12 @@ sleep 5
 echo "Running database migrations..."
 php artisan migrate --force || echo "WARNING: Database migration failed. Check your DB credentials."
 
-echo "Clearing caches..."
-php artisan config:clear
+echo "Publishing assets..."
+php artisan storage:link || true
+php artisan config:cache
 php artisan cache:clear
 php artisan view:clear
 php artisan route:clear
+php artisan view:cache
 
 echo "Entrypoint script finished. Supervisor will now start Nginx and PHP-FPM."
