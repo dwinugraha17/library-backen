@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: library-backend
+    env: docker
+    plan: free
+    region: singapore
+    branch: main
+    numInstances: 1
+    healthCheckPath: /
+    envVars:
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_NAME
+        value: LibraryBackend
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr
+      
+      # Database Configuration (Wajib diisi di Render Dashboard)
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 4000
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      
+      # TiDB / SSL Config
+      - key: MYSQL_ATTR_SSL_CA
+        value: /var/www/html/storage/cacert.pem
