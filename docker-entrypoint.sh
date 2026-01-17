@@ -99,13 +99,10 @@ echo "Creating storage link..."
 php artisan storage:link || true
 
 # Run Migrations
-echo "Waiting for database connection stability (5s)..."
-sleep 5
-
 echo "Running database migrations..."
-php artisan migrate --force || echo "WARNING: Database migration failed. Check your DB credentials."
+php artisan migrate --force --no-interaction -v || echo "WARNING: Database migration failed. This is expected if DB is not ready yet."
 
-echo "Publishing assets..."
+echo "Caching configuration..."
 php artisan storage:link || true
 php artisan config:cache
 php artisan cache:clear
