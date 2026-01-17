@@ -20,36 +20,20 @@ if [ -z "$DB_HOST" ]; then
     
     # Check for DATABASE_URL (Generic or Railway)
     elif [ -n "$DATABASE_URL" ] || [ -n "$MYSQL_URL" ]; then
-        echo "Detected Connection URL. Parsing..."
+        echo "Detected Connection URL. Parsing using PHP for robustness..."
         
-        # Use DATABASE_URL or MYSQL_URL
         target_url="${DATABASE_URL:-$MYSQL_URL}"
         
-        # Parse URL using basic string manipulation (assuming standard format: scheme://user:pass@host:port/path)
-        # Remove scheme (mysql:// or postgres://)
-        proto="$(echo $target_url | grep :// | sed -e's,^\(.*://\).*,\1,g')"
-        url="${target_url#$proto}"
-        
-        # Extract User and Password
-        userpass="$(echo $url | grep @ | cut -d@ -f1)"
-        export DB_USERNAME="$(echo $userpass | grep : | cut -d: -f1 | tr -d '[:space:]')"
-        export DB_PASSWORD="$(echo $userpass | grep : | cut -d: -f2 | tr -d '[:space:]')"
-        
-        # Extract Host and Port
-        hostport="$(echo $url | sed -e s,$userpass@,,g | cut -d/ -f1)"
-        export DB_HOST="$(echo $hostport | grep : | cut -d: -f1 | tr -d '[:space:]')"
-        export DB_PORT="$(echo $hostport | grep : | cut -d: -f2 | tr -d '[:space:]')"
-        
-        # Extract Database Name (remove query params if any)
-        dbname="$(echo $url | grep / | cut -d/ -f2- | cut -d? -f1 | tr -d '[:space:]')"
-        export DB_DATABASE="$dbname"
-        
-        # Set Connection Type
-        if [[ "$target_url" == *"postgres"* ]]; then
-             export DB_CONNECTION=pgsql
-        else
-             export DB_CONNECTION=mysql
-        fi
+        # Use PHP to parse the URL safely
+        eval $(php -r "
+            \$url = parse_url('$target_url');
+            echo 'export DB_CONNECTION=' . (\$url['scheme'] == 'postgres' ? 'pgsql' : 'mysql') . PHP_EOL;
+            echo 'export DB_HOST=' . (\$url['host'] ?? '') . PHP_EOL;
+            echo 'export DB_PORT=' . (\$url['port'] ?? '') . PHP_EOL;
+            echo 'export DB_DATABASE=' . ltrim(\$url['path'] ?? '', '/') . PHP_EOL;
+            echo 'export DB_USERNAME=' . (\$url['user'] ?? '') . PHP_EOL;
+            echo 'export DB_PASSWORD=' . (\$url['pass'] ?? '') . PHP_EOL;
+        ")
         
     # Check for PostgreSQL (Railway PostgreSQL Plugin - Variables)
     elif [ -n "$PGHOST" ]; then
