@@ -79,6 +79,12 @@ mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
+# Update Nginx Port based on Railway PORT variable
+if [ ! -z "$PORT" ]; then
+    echo "Updating Nginx port to $PORT..."
+    sed -i "s/listen 8080;/listen $PORT;/g" /etc/nginx/sites-available/default
+fi
+
 # Generate APP_KEY if not set
 if [ -z "$APP_KEY" ]; then
     echo "APP_KEY is missing. Generating..."
