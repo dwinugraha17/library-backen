@@ -1,5 +1,5 @@
 # Stage 1: Base Image with PHP-FPM and required extensions
-FROM php:8.4-fpm AS base
+FROM php:8.3-fpm AS base
 
 # Set working directory
 WORKDIR /var/www/html
