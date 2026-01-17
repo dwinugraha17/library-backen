@@ -27,26 +27,17 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install Node.js
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+# (Node.js removed because we build assets locally)
 
 # --- Build Step 1: PHP Dependencies ---
 COPY composer.json ./
 # Install dependencies, ignoring lock file to fix platform mismatch
 RUN composer install --no-dev --optimize-autoloader --no-scripts --ignore-platform-reqs
 
-# --- Build Step 2: JS Dependencies & Build ---
-COPY package.json ./
-# Copy lock file if exists, otherwise npm install will generate one
-COPY package-lock.json* ./
-RUN npm install
+# (NPM Install & Build removed)
 
-# --- Build Step 3: Copy App & Build Assets ---
+# --- Build Step 3: Copy App ---
 COPY . .
-
-# Build frontend assets
-RUN npm run build
 
 # Copy configuration files
 COPY _docker/nginx/site.conf /etc/nginx/sites-available/default
