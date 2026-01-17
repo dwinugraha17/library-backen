@@ -11,8 +11,8 @@ services:
     # Perintah untuk membangun aplikasi
     buildCommand: composer install --no-dev --optimize-autoloader
     
-    # Perintah untuk menjalankan aplikasi (Migrasi + Start)
-    startCommand: php artisan migrate --force && php artisan config:cache && php artisan route:cache
+    # Perintah untuk menjalankan aplikasi (Optimasi Cache saja)
+    startCommand: php artisan config:cache && php artisan route:cache && php artisan view:cache
     
     envVars:
       - key: APP_KEY
