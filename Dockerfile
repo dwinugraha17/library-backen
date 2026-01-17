@@ -4,7 +4,7 @@ FROM php:8.3-fpm AS base
 # Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies, including nginx and supervisor
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     nginx \
     supervisor \
@@ -21,38 +21,49 @@ RUN apt-get update && apt-get install -y \
     curl \
     dos2unix \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd zip intl
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd zip intl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install Node.js for building assets
+# Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
 
-# Copy configuration files for Nginx and Supervisor
+# --- Build Step 1: PHP Dependencies ---
+COPY composer.json composer.lock ./
+# Install dependencies but respect platform requirements (or ignore if strictly needed, but better to fix env)
+# Using --no-scripts so we don't run post-install scripts that might need full code
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
+# --- Build Step 2: JS Dependencies & Build ---
+COPY package.json ./
+# Copy lock file if exists, otherwise npm install will generate one
+COPY package-lock.json* ./
+RUN npm install
+
+# --- Build Step 3: Copy App & Build Assets ---
+COPY . .
+
+# Build frontend assets
+RUN npm run build
+
+# Copy configuration files
 COPY _docker/nginx/site.conf /etc/nginx/sites-available/default
 COPY _docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Copy application files
-COPY . .
-
-# Install PHP and JS dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts \
-    && npm install \
-    && npm run build
-
-# Make entrypoint executable
+# Setup Entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN dos2unix /usr/local/bin/docker-entrypoint.sh \
     && chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Expose the port Nginx will listen on
+# Permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache
+
 EXPOSE 8080
 
-# Run the entrypoint script which handles migrations, keys, etc.
-# Then, Supervisord will be started by the CMD
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-
-# Start Supervisor to manage Nginx and PHP-FPM
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
