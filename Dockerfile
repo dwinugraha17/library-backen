@@ -32,9 +32,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
 
 # --- Build Step 1: PHP Dependencies ---
-COPY composer.json composer.lock ./
-# Install dependencies but respect platform requirements (or ignore if strictly needed, but better to fix env)
-# Using --no-scripts so we don't run post-install scripts that might need full code
+COPY composer.json ./
+# Install dependencies, ignoring lock file to fix platform mismatch
 RUN composer install --no-dev --optimize-autoloader --no-scripts --ignore-platform-reqs
 
 # --- Build Step 2: JS Dependencies & Build ---
