@@ -16,13 +16,15 @@ services:
     
     envVars:
       - key: APP_KEY
-        generateValue: true
+        value: base64:7j8rY9rY9rY9rY9rY9rY9rY9rY9rY9rY9rY9rY9rY9r=
       - key: APP_NAME
-        value: LibraryBackend
+        value: "UNILAM Library"
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
-        value: false
+        value: "true"
+      - key: APP_TIMEZONE
+        value: Asia/Jakarta
       - key: LOG_CHANNEL
         value: stderr
       
@@ -30,20 +32,36 @@ services:
       - key: DOCUMENT_ROOT
         value: public
 
-      # Database Configuration (Wajib diisi di Render Dashboard)
+      # Database Configuration
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
-        sync: false
+        value: gateway01.ap-southeast-1.prod.aws.tidbcloud.com
       - key: DB_PORT
-        value: 4000
+        value: "4000"
       - key: DB_DATABASE
-        sync: false
+        value: test
       - key: DB_USERNAME
-        sync: false
+        value: 2HSZkUNNK1LiwJL.root
       - key: DB_PASSWORD
-        sync: false
+        value: mAgO73HA2BnH4n6i
       
-      # Path Sertifikat SSL (Sesuai lokasi di storage Laravel)
+      # Drivers
+      - key: CACHE_DRIVER
+        value: database
+      - key: SESSION_DRIVER
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: FILESYSTEM_DISK
+        value: public
+
+      # Fonnte API
+      - key: FONNTE_API_TOKEN
+        value: Dgz15dVAuCJWLcL3yaJC
+      - key: FONNTE_BASE_URL
+        value: https://api.fonnte.com
+      
+      # Path Sertifikat SSL TiDB
       - key: MYSQL_ATTR_SSL_CA
         value: storage/cacert.pem
