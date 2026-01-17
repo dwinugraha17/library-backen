@@ -1,12 +1,19 @@
 services:
   - type: web
     name: library-backend
-    env: docker
+    env: php
     plan: free
     region: singapore
     branch: main
     numInstances: 1
     healthCheckPath: /
+    
+    # Perintah untuk membangun aplikasi
+    buildCommand: composer install --no-dev --optimize-autoloader
+    
+    # Perintah untuk menjalankan aplikasi (Migrasi + Start)
+    startCommand: php artisan migrate --force && php artisan config:cache && php artisan route:cache
+    
     envVars:
       - key: APP_KEY
         generateValue: true
@@ -19,6 +26,10 @@ services:
       - key: LOG_CHANNEL
         value: stderr
       
+      # PENTING: Beritahu Render untuk menggunakan folder public
+      - key: DOCUMENT_ROOT
+        value: public
+
       # Database Configuration (Wajib diisi di Render Dashboard)
       - key: DB_CONNECTION
         value: mysql
@@ -33,6 +44,6 @@ services:
       - key: DB_PASSWORD
         sync: false
       
-      # TiDB / SSL Config
+      # Path Sertifikat SSL (Sesuai lokasi di storage Laravel)
       - key: MYSQL_ATTR_SSL_CA
-        value: /var/www/html/storage/cacert.pem
+        value: storage/cacert.pem
