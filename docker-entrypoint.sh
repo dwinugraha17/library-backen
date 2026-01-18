@@ -6,7 +6,9 @@ echo "--- STARTING DEPLOYMENT SCRIPT (DEBUG MODE) ---"
 
 # 1. Setup Storage Permissions
 echo "[INFO] Fixing storage permissions..."
-mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
+# Ensure all required directories exist, including 'data' for file cache driver
+mkdir -p storage/framework/{cache/data,sessions,views} storage/logs bootstrap/cache
+# Fix permissions recursively
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
