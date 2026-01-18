@@ -42,4 +42,5 @@ RUN rm -f bootstrap/cache/*.php
 EXPOSE 8080
 
 # Start command: Run directly to avoid script issues
-CMD sh -c "php artisan config:clear && php artisan cache:clear && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+# We create directories AT RUNTIME to ensure they exist even if overwritten/missing
+CMD sh -c "mkdir -p storage/framework/{cache/data,sessions,views} storage/logs bootstrap/cache && chmod -R 777 storage bootstrap/cache && php artisan config:clear && php artisan cache:clear && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
