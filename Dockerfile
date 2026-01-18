@@ -40,6 +40,6 @@ RUN rm -f bootstrap/cache/*.php
 # Expose port (Documentation only, Railway overrides this)
 EXPOSE 8080
 
-# Start command: Clear cache to be safe, then serve
+# Start command: Clear cache to be safe, link storage, then serve
 # Using 'sh -c' to handle environment variable expansion correctly
-CMD sh -c "php artisan config:clear && php artisan cache:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+CMD sh -c "php artisan config:clear && php artisan cache:clear && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
