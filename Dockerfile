@@ -39,6 +39,9 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --ignore-platfo
 # --- Build Step 3: Copy App ---
 COPY . .
 
+# Remove local cache files to prevent path issues
+RUN rm -f bootstrap/cache/*.php
+
 # Copy configuration files
 COPY _docker/nginx/site.conf /etc/nginx/sites-available/default
 COPY _docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf

@@ -4,6 +4,10 @@ set +e
 
 echo "--- STARTING DEPLOYMENT SCRIPT (DEBUG MODE) ---"
 
+# 0. Clean Start - Remove any potential bad caches
+rm -f bootstrap/cache/*.php
+mkdir -p storage/framework/{cache/data,sessions,views} storage/logs bootstrap/cache
+
 # 1. Setup Storage Permissions
 echo "[INFO] Fixing storage permissions..."
 # Ensure all required directories exist, including 'data' for file cache driver
