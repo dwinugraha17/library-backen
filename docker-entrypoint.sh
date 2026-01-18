@@ -19,7 +19,7 @@ chmod -R 775 storage bootstrap/cache
 # 2. Dynamic Port for Railway
 if [ ! -z "$PORT" ]; then
     echo "[INFO] Updating Nginx port to $PORT..."
-    sed -i "s/listen 8080;/listen $PORT;/g" /etc/nginx/sites-available/default
+    sed -i "s/listen\s\+8080;/listen $PORT;/g" /etc/nginx/sites-available/default
 fi
 
 # 3. DB Configuration Parsing

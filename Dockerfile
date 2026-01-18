@@ -49,6 +49,8 @@ COPY _docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Setup Entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN dos2unix /usr/local/bin/docker-entrypoint.sh \
+    && dos2unix /etc/nginx/sites-available/default \
+    && dos2unix /etc/supervisor/conf.d/supervisord.conf \
     && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Permissions
