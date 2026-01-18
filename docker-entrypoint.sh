@@ -43,16 +43,8 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
 fi
 
-# 5. Database Migration (Attempt Only)
-echo "[INFO] Attempting Database Migration..."
-# Run migration but don't fail the script if it crashes
-php artisan migrate --force --no-interaction -v
-EXIT_CODE=$?
-if [ $EXIT_CODE -ne 0 ]; then
-    echo "[ERROR] Migration failed with code $EXIT_CODE. Ignoring to keep server alive."
-else
-    echo "[SUCCESS] Migration completed."
-fi
+# 5. Database Migration (Removed as requested)
+echo "[INFO] Skipping Database Migration (Already done manually)."
 
 # 6. Clear Caches
 echo "[INFO] Clearing caches..."
