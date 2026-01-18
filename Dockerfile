@@ -25,6 +25,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copy application code
 COPY . .
+COPY start.sh /usr/local/bin/start.sh
 
 # Install PHP dependencies (Optimize for production)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
@@ -32,7 +33,9 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 # Create necessary directories and fix permissions
 RUN mkdir -p storage/framework/{cache/data,sessions,views} storage/logs bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache \
+    && dos2unix /usr/local/bin/start.sh \
+    && chmod +x /usr/local/bin/start.sh
 
 # Remove any local cache files that might have been copied
 RUN rm -f bootstrap/cache/*.php
@@ -40,6 +43,5 @@ RUN rm -f bootstrap/cache/*.php
 # Expose port (Documentation only, Railway overrides this)
 EXPOSE 8080
 
-# Start command: Clear cache to be safe, link storage, then serve
-# Using 'sh -c' to handle environment variable expansion correctly
-CMD sh -c "php artisan config:clear && php artisan cache:clear && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+# Start command
+CMD ["/usr/local/bin/start.sh"]
