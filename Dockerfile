@@ -30,7 +30,7 @@ COPY . .
 # Install PHP dependencies (Optimize for production)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
-# Create necessary directories and fix permissions
+# Fix permissions
 RUN mkdir -p storage/framework/{cache/data,sessions,views} storage/logs bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
@@ -41,6 +41,9 @@ RUN rm -f bootstrap/cache/*.php
 # Expose port (Documentation only, Railway overrides this)
 EXPOSE 8080
 
+# Environment variables to force paths
+ENV VIEW_COMPILED_PATH=/tmp/views
+
 # Start command: Run directly to avoid script issues
 # We create directories AT RUNTIME to ensure they exist even if overwritten/missing
-CMD sh -c "mkdir -p storage/framework/{cache/data,sessions,views} storage/logs bootstrap/cache && chmod -R 777 storage bootstrap/cache && php artisan config:clear && php artisan cache:clear && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+CMD sh -c "mkdir -p /tmp/views storage/framework/{cache/data,sessions,views} storage/logs bootstrap/cache && chmod -R 777 storage bootstrap/cache && php artisan config:clear && php artisan view:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
