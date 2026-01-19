@@ -45,5 +45,9 @@ EXPOSE 8080
 ENV VIEW_COMPILED_PATH=/tmp/views
 
 # Start command: Run directly to avoid script issues
-# We use the built-in PHP server pointing to the public directory
-CMD sh -c "mkdir -p /tmp/views storage/framework/{cache/data,sessions,views} storage/logs bootstrap/cache && chmod -R 777 storage bootstrap/cache && php artisan config:clear && php artisan view:clear && php -S 0.0.0.0:${PORT:-8080} -t public/"
+# 1. Create necessary directories
+# 2. Ensure sqlite DB exists
+# 3. Generate key if missing (careful in prod, but needed if env empty)
+# 4. Migrate database
+# 5. Start PHP server
+CMD sh -c "mkdir -p /tmp/views storage/framework/{cache/data,sessions,views} storage/logs bootstrap/cache database && chmod -R 777 storage bootstrap/cache database && touch database/database.sqlite && chmod 777 database/database.sqlite && php artisan key:generate --force --skip-if-exists && php artisan migrate --force && php artisan config:clear && php -S 0.0.0.0:${PORT:-8080} -t public/"
