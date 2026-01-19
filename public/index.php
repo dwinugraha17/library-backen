@@ -1,30 +1,9 @@
 <?php
 
-// --- DEBUG & CORS PRE-FLIGHT ---
-// Log request to stderr for Railway logs
-file_put_contents('php://stderr', sprintf(
-    "[%s] %s %s Origin: %s\n",
-    date('c'),
-    $_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN',
-    $_SERVER['REQUEST_URI'] ?? 'UNKNOWN',
-    $_SERVER['HTTP_ORIGIN'] ?? 'NONE'
-));
-
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-$allowed_origins = [
-    'https://frontend-perpus-nu.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:8000'
-];
-
-if (in_array($origin, $allowed_origins) || empty($origin)) {
-    // If valid origin (or no origin/server-to-server), allow it
-    // Note: 'empty($origin)' check allows non-browser tools (like Postman) to work if they don't send Origin
-    header("Access-Control-Allow-Origin: " . ($origin ?: '*'));
-    header("Access-Control-Allow-Credentials: true");
-    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-    header("Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, X-Requested-With, ngrok-skip-browser-warning");
-}
+// --- SIMPLE & WIDE OPEN CORS ---
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+header("Access-Control-Allow-Headers: *");
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
     http_response_code(200);
