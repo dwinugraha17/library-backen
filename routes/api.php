@@ -10,6 +10,19 @@ Route::get('/ping', function() {
     return response()->json(['message' => 'API is working']);
 });
 
+Route::get('/buat-user-tes', function() {
+    $user = \App\Models\User::updateOrCreate(
+        ['email' => 'admin@gmail.com'],
+        [
+            'name' => 'Admin Tes',
+            'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+            'phone_number' => '08123456789',
+            'role' => 'admin'
+        ]
+    );
+    return response()->json(['message' => 'User tes berhasil dibuat', 'user' => $user]);
+});
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
