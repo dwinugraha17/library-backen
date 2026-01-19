@@ -15,14 +15,15 @@
 
     <div class="card card-custom border-0 shadow-sm">
         <div class="card-body p-0">
-            <div class="table-responsive">
+            <!-- Desktop View (Table) -->
+            <div class="table-responsive d-none d-md-block">
                 <table class="table table-hover align-middle mb-0 text-nowrap">
                     <thead class="table-light">
                         <tr>
                             <th class="ps-4">Cover</th>
                             <th>Judul & Penulis</th>
-                            <th class="d-none d-md-table-cell">Kategori</th>
-                            <th class="d-none d-sm-table-cell">Stok</th>
+                            <th>Kategori</th>
+                            <th>Stok</th>
                             <th>Status</th>
                             <th class="pe-4 text-end">Aksi</th>
                         </tr>
@@ -35,20 +36,14 @@
                             </td>
                             <td>
                                 <div class="fw-bold text-truncate" style="max-width: 200px;">{{ $book->title }}</div>
-                                <small class="text-muted d-block text-truncate" style="max-width: 150px;">{{ $book->author }}</small>
-                                <!-- Show Category on Mobile only inside this cell -->
-                                <div class="d-md-none mt-1">
-                                    <span class="badge bg-secondary" style="font-size: 0.65rem;">{{ $book->category }}</span>
-                                </div>
+                                <small class="text-muted">{{ $book->author }}</small>
                             </td>
-                            <td class="d-none d-md-table-cell"><span class="badge bg-secondary">{{ $book->category }}</span></td>
-                            <td class="d-none d-sm-table-cell">{{ $book->stock }}</td>
+                            <td><span class="badge bg-secondary">{{ $book->category }}</span></td>
+                            <td>{{ $book->stock }}</td>
                             <td>
                                 <span class="badge {{ $book->status == 'Available' ? 'bg-success' : 'bg-danger' }}">
                                     {{ $book->status }}
                                 </span>
-                                <!-- Show Stock on Mobile inside this cell -->
-                                <div class="d-sm-none small text-muted mt-1">Stok: {{ $book->stock }}</div>
                             </td>
                             <td class="pe-4 text-end">
                                 <a href="{{ route('admin.books.edit', $book->id) }}" class="btn btn-sm btn-warning me-1">
@@ -73,6 +68,49 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile View (Card List) -->
+            <div class="d-md-none p-3 bg-light">
+                @forelse($books as $book)
+                <div class="card mb-3 border border-light shadow-sm">
+                    <div class="card-body p-3">
+                        <div class="d-flex gap-3">
+                            <img src="{{ $book->cover_image }}" alt="Cover" width="60" height="90" class="rounded shadow-sm object-fit-cover flex-shrink-0">
+                            <div class="flex-grow-1 min-w-0">
+                                <h6 class="fw-bold text-truncate mb-1">{{ $book->title }}</h6>
+                                <p class="text-muted small mb-2 text-truncate">{{ $book->author }}</p>
+                                <div class="d-flex flex-wrap gap-1 mb-2">
+                                    <span class="badge bg-secondary" style="font-size: 0.7rem;">{{ $book->category }}</span>
+                                    <span class="badge {{ $book->status == 'Available' ? 'bg-success' : 'bg-danger' }}" style="font-size: 0.7rem;">
+                                        {{ $book->status }}
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted fw-bold">Stok: {{ $book->stock }}</small>
+                                    <div>
+                                        <a href="{{ route('admin.books.edit', $book->id) }}" class="btn btn-sm btn-warning py-0 px-2">
+                                            <i class="fas fa-edit fa-xs"></i>
+                                        </a>
+                                        <form action="{{ route('admin.books.destroy', $book->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus buku ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger py-0 px-2">
+                                                <i class="fas fa-trash fa-xs"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-book-open fa-3x mb-3 opacity-25"></i>
+                    <p>Belum ada data buku.</p>
+                </div>
+                @endforelse
             </div>
         </div>
         @if($books->hasPages())
