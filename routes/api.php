@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Route;
 
 use Illuminate\Support\Facades\Log;
 
+Route::get('/ping', function() {
+    return response()->json(['message' => 'API is working', 'time' => now()]);
+});
+
 Route::post('/register', function(\Illuminate\Http\Request $request) {
     Log::info('Register route hit');
     return app(AuthController::class)->register($request);

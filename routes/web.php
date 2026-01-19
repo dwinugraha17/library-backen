@@ -10,6 +10,10 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
+Route::get('/ping', function() {
+    return response()->json(['message' => 'Web is working', 'time' => now()]);
+});
+
 // Simple Admin Routes
 Route::prefix('simple-admin')->group(function () {
     Route::get('/login', [SimpleAdminController::class, 'loginForm'])->name('admin.login');
