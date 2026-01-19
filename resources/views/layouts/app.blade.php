@@ -63,9 +63,9 @@
 
 <div class="content-wrapper">
     <!-- Sidebar (Offcanvas on mobile, Fixed on Desktop) -->
-    <div class="offcanvas-lg offcanvas-start sidebar" tabindex="-1" id="sidebarMenu">
+    <div class="offcanvas-lg offcanvas-start sidebar bg-dark" tabindex="-1" id="sidebarMenu">
         <div class="offcanvas-header bg-dark text-white border-bottom border-secondary d-lg-none">
-            <h5 class="offcanvas-title fw-bold"><i class="fas fa-book-reader me-2"></i>Menu</h5>
+            <h5 class="offcanvas-title fw-bold"><i class="fas fa-book-reader me-2"></i>UNILAM Admin</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu"></button>
         </div>
 
