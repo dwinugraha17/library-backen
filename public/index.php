@@ -1,21 +1,36 @@
 <?php
 
-// --- MANUAL CORS HANDLING (AGGRESSIVE WILDCARD) ---
-// Gunakan Wildcard '*' untuk semua origin.
-// Matikan 'Access-Control-Allow-Credentials' agar '*' valid.
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-// Allow semua header yang mungkin dikirim frontend
-header("Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, X-Requested-With, ngrok-skip-browser-warning");
+// --- DEBUG & CORS PRE-FLIGHT ---
+// Log request to stderr for Railway logs
+file_put_contents('php://stderr', sprintf(
+    "[%s] %s %s Origin: %s\n",
+    date('c'),
+    $_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN',
+    $_SERVER['REQUEST_URI'] ?? 'UNKNOWN',
+    $_SERVER['HTTP_ORIGIN'] ?? 'NONE'
+));
 
-// Handle preflight requests immediately
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$allowed_origins = [
+    'https://frontend-perpus-nu.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:8000'
+];
+
+if (in_array($origin, $allowed_origins) || empty($origin)) {
+    // If valid origin (or no origin/server-to-server), allow it
+    // Note: 'empty($origin)' check allows non-browser tools (like Postman) to work if they don't send Origin
+    header("Access-Control-Allow-Origin: " . ($origin ?: '*'));
+    header("Access-Control-Allow-Credentials: true");
+    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+    header("Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, X-Requested-With, ngrok-skip-browser-warning");
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
-    // Pastikan status 200 OK dikirim
     http_response_code(200);
-    // Exit script agar Laravel tidak menimpa header ini
     exit();
 }
-// ----------------------------------------
+// -------------------------------
 
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
