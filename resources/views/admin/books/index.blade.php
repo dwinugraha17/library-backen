@@ -73,35 +73,38 @@
             <!-- Mobile View (Card List) -->
             <div class="d-md-none p-3 bg-light">
                 @forelse($books as $book)
-                <div class="card mb-3 border border-light shadow-sm">
+                <div class="card mb-3 border-0 shadow-sm rounded-3 overflow-hidden">
                     <div class="card-body p-3">
                         <div class="d-flex gap-3">
-                            <img src="{{ $book->cover_image }}" alt="Cover" width="60" height="90" class="rounded shadow-sm object-fit-cover flex-shrink-0">
+                            <img src="{{ $book->cover_image }}" alt="Cover" width="70" height="100" class="rounded shadow-sm object-fit-cover flex-shrink-0">
                             <div class="flex-grow-1 min-w-0">
-                                <h6 class="fw-bold text-truncate mb-1">{{ $book->title }}</h6>
+                                <h6 class="fw-bold text-dark mb-1 text-truncate">{{ $book->title }}</h6>
                                 <p class="text-muted small mb-2 text-truncate">{{ $book->author }}</p>
+                                
                                 <div class="d-flex flex-wrap gap-1 mb-2">
                                     <span class="badge bg-secondary" style="font-size: 0.7rem;">{{ $book->category }}</span>
                                     <span class="badge {{ $book->status == 'Available' ? 'bg-success' : 'bg-danger' }}" style="font-size: 0.7rem;">
                                         {{ $book->status }}
                                     </span>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted fw-bold">Stok: {{ $book->stock }}</small>
-                                    <div>
-                                        <a href="{{ route('admin.books.edit', $book->id) }}" class="btn btn-sm btn-warning py-0 px-2">
-                                            <i class="fas fa-edit fa-xs"></i>
-                                        </a>
-                                        <form action="{{ route('admin.books.destroy', $book->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus buku ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger py-0 px-2">
-                                                <i class="fas fa-trash fa-xs"></i>
-                                            </button>
-                                        </form>
-                                    </div>
+                                <div class="small fw-bold text-dark">
+                                    <i class="fas fa-cubes me-1 text-muted"></i> Stok: {{ $book->stock }}
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-top p-2">
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ route('admin.books.edit', $book->id) }}" class="btn btn-warning btn-sm flex-fill">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </a>
+                            <form action="{{ route('admin.books.destroy', $book->id) }}" method="POST" class="d-inline flex-fill" onsubmit="return confirm('Yakin ingin menghapus buku ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm w-100">
+                                    <i class="fas fa-trash me-1"></i> Hapus
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

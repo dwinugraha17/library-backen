@@ -30,7 +30,20 @@
 
         /* Responsive Layout */
         @media (min-width: 992px) {
-            .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; top: 0; left: 0; z-index: 1000; overflow-y: auto; }
+            .sidebar { 
+                width: var(--sidebar-width); 
+                height: 100vh; 
+                position: fixed; 
+                top: 0; 
+                left: 0; 
+                z-index: 1000; 
+                overflow-y: auto;
+                /* Force visibility on desktop to override offcanvas behavior */
+                display: flex !important;
+                flex-direction: column;
+                transform: none !important;
+                visibility: visible !important;
+            }
             .content-wrapper { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); }
             .mobile-header { display: none; }
         }
