@@ -45,5 +45,5 @@ EXPOSE 8080
 ENV VIEW_COMPILED_PATH=/tmp/views
 
 # Start command: Run directly to avoid script issues
-# We create directories AT RUNTIME to ensure they exist even if overwritten/missing
-CMD sh -c "mkdir -p /tmp/views storage/framework/{cache/data,sessions,views} storage/logs bootstrap/cache && chmod -R 777 storage bootstrap/cache && php artisan config:clear && php artisan view:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+# We use the built-in PHP server pointing to the public directory
+CMD sh -c "mkdir -p /tmp/views storage/framework/{cache/data,sessions,views} storage/logs bootstrap/cache && chmod -R 777 storage bootstrap/cache && php artisan config:clear && php artisan view:clear && php -S 0.0.0.0:${PORT:-8080} -t public/"
