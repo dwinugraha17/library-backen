@@ -7,10 +7,11 @@ use App\Http\Controllers\Api\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/ping', function() {
-    return response()->json(['message' => 'API is working']);
+    return response()->json(['message' => 'API is working', 'version' => '3.4']);
 });
 
-Route::get('/buat-user-tes', function() {
+// Rute dengan dua variasi nama (tes dan test)
+$buatUser = function() {
     $user = \App\Models\User::updateOrCreate(
         ['email' => 'admin@gmail.com'],
         [
@@ -21,6 +22,16 @@ Route::get('/buat-user-tes', function() {
         ]
     );
     return response()->json(['message' => 'User tes berhasil dibuat', 'user' => $user]);
+};
+
+Route::get('/buat-user-tes', $buatUser);
+Route::get('/buat-user-test', $buatUser);
+
+// Rute untuk melihat semua rute yang terdaftar (Hanya untuk DEBUG)
+Route::get('/daftar-rute', function() {
+    return collect(\Route::getRoutes())->map(function ($route) {
+        return [$route->methods()[0] => $route->uri()];
+    });
 });
 
 Route::post('/register', [AuthController::class, 'register']);
