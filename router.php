@@ -1,5 +1,10 @@
 <?php
 
+// --- EMERGENCY HEARTBEAT ---
+if (($_SERVER['REQUEST_URI'] ?? '') === '/cek-server') {
+    die("SERVER RAILWAY HIDUP - JIKA ANDA MELIHAT INI BERARTI JALUR KONEKSI BENAR");
+}
+
 // --- CORS FOR BUILT-IN SERVER ---
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
