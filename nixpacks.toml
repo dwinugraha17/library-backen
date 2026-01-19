@@ -24,4 +24,4 @@ cmds = [
 ]
 
 [start]
-cmd = "sh -c 'chmod -R 777 storage bootstrap/cache && php artisan storage:link && php artisan config:clear && php artisan cache:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}'"
+cmd = "sh -c 'chmod -R 777 storage bootstrap/cache && php artisan storage:link && php artisan config:clear && php artisan cache:clear && php -S 0.0.0.0:${PORT:-8080} -t public router.php'"
