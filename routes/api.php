@@ -6,20 +6,12 @@ use App\Http\Controllers\Api\BorrowController;
 use App\Http\Controllers\Api\ReviewController;
 use Illuminate\Support\Facades\Route;
 
-use Illuminate\Support\Facades\Log;
-
 Route::get('/ping', function() {
-    return response()->json(['message' => 'API is working', 'time' => now()]);
+    return response()->json(['message' => 'API is working']);
 });
 
-Route::post('/register', function(\Illuminate\Http\Request $request) {
-    Log::info('Register route hit');
-    return app(AuthController::class)->register($request);
-});
-Route::post('/login', function(\Illuminate\Http\Request $request) {
-    Log::info('Login route hit');
-    return app(AuthController::class)->login($request);
-});
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
