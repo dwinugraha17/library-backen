@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "sh -c 'chmod -R 777 storage bootstrap/cache && php artisan storage:link && php artisan config:clear && php artisan cache:clear && php -S 0.0.0.0:$PORT -t public router.php'",
+    "startCommand": "sh -c 'chmod -R 777 storage bootstrap/cache && php artisan storage:link && php artisan config:clear && php artisan cache:clear && php artisan route:clear && php -S 0.0.0.0:$PORT -t public router.php'",
     "runtime": "V2",
     "numReplicas": 1,
     "sleepApplication": false,
