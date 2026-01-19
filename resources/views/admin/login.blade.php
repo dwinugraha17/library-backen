@@ -6,8 +6,8 @@
     <title>Admin Login - UNILAM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light d-flex align-items-center justify-content-center" style="height: 100vh;">
-    <div class="card shadow-sm" style="width: 400px;">
+<body class="bg-light d-flex align-items-center justify-content-center" style="height: 100vh; padding: 20px;">
+    <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
         <div class="card-body p-4">
             <h4 class="text-center mb-4">Admin Login</h4>
             @if ($errors->any())
