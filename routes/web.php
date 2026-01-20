@@ -18,7 +18,7 @@ Route::get('/test-resend', function () {
     // Force route refresh
     try {
         Mail::raw('Halo! Ini adalah tes email menggunakan RESEND API dari UNILAM Library.', function ($message) {
-            $message->to('dwinugraha17@gmail.com') // Pastikan ini email yang terdaftar di Resend
+            $message->to('chanddwi780@gmail.com') // Diubah ke email terdaftar Resend
                     ->subject('Test Resend Railway');
         });
         return "Resend Berhasil! Cek inbox Anda.";
