@@ -19,6 +19,16 @@ Route::get('/test-email', function () {
     }
 });
 
+Route::get('/debug-mail-config', function () {
+    $smtp = config('mail.mailers.smtp');
+    return response()->json([
+        'host_check' => '>>' . $smtp['host'] . '<<', // Cek spasi
+        'port' => $smtp['port'],
+        'username' => '>>' . $smtp['username'] . '<<',
+        'encryption' => $smtp['encryption'] ?? 'null',
+    ]);
+});
+
 Route::get('/ping', function() {
     return response()->json(['message' => 'Web is working', 'time' => now()]);
 });
