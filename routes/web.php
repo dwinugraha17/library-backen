@@ -37,3 +37,17 @@ Route::middleware(['auth', 'can:admin-access'])->prefix('admin')->name('admin.')
     // User Management
     Route::resource('users', UserController::class);
 });
+
+Route::get('/debug-logs', function () {
+    $logFile = storage_path('logs/laravel.log');
+    if (!file_exists($logFile)) {
+        return "Log file not found.";
+    }
+    
+    $content = file_get_contents($logFile);
+    // Ambil 100 baris terakhir agar tidak terlalu berat
+    $lines = explode("\n", $content);
+    $lastLines = array_slice($lines, -100);
+    
+    return "<pre>" . implode("\n", $lastLines) . "</pre>";
+});
