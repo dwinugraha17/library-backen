@@ -71,13 +71,20 @@ class BookController extends Controller
         return response()->json($book, 201);
     }
 
-    public function show(Book $book)
+    public function show($id)
     {
-        $book->load(['reviews' => function($query) {
+        $book = Book::with(['reviews' => function($query) {
             $query->orderBy('created_at', 'desc');
-        }, 'reviews.user:id,name,profile_photo']);
+        }, 'reviews.user:id,name,profile_photo'])->find($id);
+
+        if (!$book) {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
         
-        $book->average_rating = $book->reviews()->avg('rating');
+        // Calculate average from the loaded collection (faster and safer)
+        $avg = $book->reviews->avg('rating');
+        $book->average_rating = $avg ? round($avg, 1) : 0;
+
         return response()->json($book);
     }
 
