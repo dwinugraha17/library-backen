@@ -22,7 +22,7 @@ Route::get('/test-brevo', function (\App\Services\BrevoService $brevo) {
         '<h1>Berhasil!</h1><p>Ini adalah tes pengiriman email menggunakan Brevo API.</p>'
     );
     
-    return $result ? "Email Brevo Berhasil Dikirim!" : "Gagal Mengirim Email Brevo.";
+    return $result['success'] ? "Email Brevo Berhasil Dikirim!" : "Gagal Mengirim Email Brevo: " . $result['error'];
 });
 
 // Simple Admin Routes

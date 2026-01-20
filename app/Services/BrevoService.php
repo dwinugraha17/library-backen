@@ -41,14 +41,14 @@ class BrevoService
             ]);
 
             if ($response->successful()) {
-                return true;
+                return ['success' => true];
             }
 
             Log::error('Brevo API Error: ' . $response->body());
-            return false;
+            return ['success' => false, 'error' => $response->body()];
         } catch (\Exception $e) {
             Log::error('Brevo Exception: ' . $e->getMessage());
-            return false;
+            return ['success' => false, 'error' => $e->getMessage()];
         }
     }
 }
