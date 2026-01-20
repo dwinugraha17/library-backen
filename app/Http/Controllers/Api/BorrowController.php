@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Borrowing;
+use App\Services\FonnteService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class BorrowController extends Controller
 {
-    public function borrow(Request $request)
+    public function borrow(Request $request, FonnteService $fonnte)
     {
         $validator = Validator::make($request->all(), [
             'book_id' => 'required|exists:books,id',
@@ -29,7 +31,7 @@ class BorrowController extends Controller
             return response()->json(['message' => 'Book is out of stock'], 400);
         }
 
-        return DB::transaction(function () use ($request, $book) {
+        $borrowing = DB::transaction(function () use ($request, $book) {
             $borrowing = Borrowing::create([
                 'user_id' => $request->user()->id,
                 'book_id' => $request->book_id,
@@ -43,8 +45,27 @@ class BorrowController extends Controller
                 $book->update(['status' => 'Unavailable']);
             }
 
-            return response()->json($borrowing, 201);
+            return $borrowing;
         });
+
+        // Send WhatsApp Notification
+        try {
+            $user = $request->user();
+            if ($user->phone_number) {
+                $message = "Halo {$user->name},\n\n" .
+                    "Peminjaman buku berhasil!\n" .
+                    "Judul: *{$book->title}*\n" .
+                    "Tanggal Pinjam: " . Carbon::parse($borrowing->borrow_date)->format('d M Y') . "\n" .
+                    "Batas Kembali: " . Carbon::parse($borrowing->return_date)->format('d M Y') . "\n\n" .
+                    "Terima kasih telah menggunakan UNILAM Library.";
+
+                $fonnte->sendMessage($user->phone_number, $message);
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Failed to send borrow notification: " . $e->getMessage());
+        }
+
+        return response()->json($borrowing, 201);
     }
 
     public function returnBook(Request $request, Borrowing $borrowing)
