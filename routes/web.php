@@ -15,6 +15,7 @@ Route::get('/ping', function() {
 });
 
 Route::get('/test-resend', function () {
+    // Force route refresh
     try {
         Mail::raw('Halo! Ini adalah tes email menggunakan RESEND API dari UNILAM Library.', function ($message) {
             $message->to('dwinugraha17@gmail.com') // Pastikan ini email yang terdaftar di Resend
