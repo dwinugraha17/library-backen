@@ -1,13 +1,22 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SimpleAdminController;
-use App\Http\Controllers\Admin\AdminAuthController;
-use App\Http\Controllers\Admin\AdminBookController;
-use App\Http\Controllers\Admin\UserController;
+use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
-    return redirect('/login');
+    return view('welcome');
+});
+
+Route::get('/test-email', function () {
+    try {
+        Mail::raw('Halo, ini tes email dari UNILAM Library via Railway!', function ($message) {
+            $message->to('dwinugraha17@gmail.com') // Ganti ke email tujuan test
+                    ->subject('Test Email Railway');
+        });
+        return "Email berhasil dikirim! Cek inbox.";
+    } catch (\Exception $e) {
+        return "Gagal kirim email: " . $e->getMessage();
+    }
 });
 
 Route::get('/ping', function() {
