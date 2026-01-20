@@ -21,14 +21,18 @@ class BrevoService
     public function sendEmail($toEmail, $toName, $subject, $htmlContent)
     {
         try {
+            $apiKey = env('BREVO_API_KEY');
+            $fromEmail = env('MAIL_FROM_ADDRESS', 'chanddwi780@gmail.com');
+            $fromName = env('MAIL_FROM_NAME', 'UNILAM Library');
+
             $response = Http::withHeaders([
-                'api-key' => $this->apiKey,
+                'api-key' => $apiKey,
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ])->post('https://api.brevo.com/v3/smtp/email', [
                 'sender' => [
-                    'name' => $this->fromName,
-                    'email' => $this->fromEmail,
+                    'name' => $fromName,
+                    'email' => $fromEmail,
                 ],
                 'to' => [
                     [
