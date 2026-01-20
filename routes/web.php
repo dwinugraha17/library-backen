@@ -14,6 +14,18 @@ Route::get('/ping', function() {
     return response()->json(['message' => 'Web is working', 'time' => now()]);
 });
 
+Route::get('/test-resend', function () {
+    try {
+        Mail::raw('Halo! Ini adalah tes email menggunakan RESEND API dari UNILAM Library.', function ($message) {
+            $message->to('dwinugraha17@gmail.com') // Pastikan ini email yang terdaftar di Resend
+                    ->subject('Test Resend Railway');
+        });
+        return "Resend Berhasil! Cek inbox Anda.";
+    } catch (\Exception $e) {
+        return "Resend Gagal: " . $e->getMessage();
+    }
+});
+
 // Simple Admin Routes
 Route::prefix('simple-admin')->group(function () {
     Route::get('/login', [SimpleAdminController::class, 'loginForm'])->name('admin.login');
