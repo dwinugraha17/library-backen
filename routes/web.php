@@ -1,32 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\Admin\SimpleAdminController;
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminBookController;
+use App\Http\Controllers\Admin\UserController;
 
 Route::get('/', function () {
     return view('welcome');
-});
-
-Route::get('/test-email', function () {
-    try {
-        Mail::raw('Halo, ini tes email dari UNILAM Library via Railway!', function ($message) {
-            $message->to('dwinugraha17@gmail.com') // Ganti ke email tujuan test
-                    ->subject('Test Email Railway');
-        });
-        return "Email berhasil dikirim! Cek inbox.";
-    } catch (\Exception $e) {
-        return "Gagal kirim email: " . $e->getMessage();
-    }
-});
-
-Route::get('/debug-mail-config', function () {
-    $smtp = config('mail.mailers.smtp');
-    return response()->json([
-        'host_check' => '>>' . $smtp['host'] . '<<', // Cek spasi
-        'port' => $smtp['port'],
-        'username' => '>>' . $smtp['username'] . '<<',
-        'encryption' => $smtp['encryption'] ?? 'null',
-    ]);
 });
 
 Route::get('/ping', function() {
