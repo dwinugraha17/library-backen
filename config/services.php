@@ -39,4 +39,8 @@ return [
         'base_url' => env('FONNTE_BASE_URL', 'https://api.fonnte.com'),
     ],
 
+    'brevo' => [
+        'key' => env('BREVO_API_KEY'),
+    ],
+
 ];
