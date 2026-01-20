@@ -9,9 +9,33 @@ use Illuminate\Support\Facades\Validator;
 
 class BookController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Book::all());
+        $query = Book::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('author', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category') && $request->category !== 'Semua') {
+            $query->where('category', $request->category);
+        }
+
+        // Add average rating to the query
+        $books = $query->withAvg('reviews', 'rating')->get();
+
+        // Map to include average_rating attribute
+        $books->transform(function ($book) {
+            $book->average_rating = $book->reviews_avg_rating ? round($book->reviews_avg_rating, 1) : 0;
+            unset($book->reviews_avg_rating);
+            return $book;
+        });
+
+        return response()->json($books);
     }
 
     public function store(Request $request)
