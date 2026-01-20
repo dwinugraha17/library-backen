@@ -25,6 +25,9 @@ class BrevoService
             $fromEmail = config('mail.from.address');
             $fromName = config('mail.from.name');
 
+            Log::info("Brevo Attempt: Sending to $toEmail from $fromEmail");
+            Log::info("API Key Check: " . substr($apiKey, 0, 10) . "...");
+
             $response = Http::withHeaders([
                 'api-key' => $apiKey,
                 'Content-Type' => 'application/json',
@@ -43,6 +46,9 @@ class BrevoService
                 'subject' => $subject,
                 'htmlContent' => $htmlContent,
             ]);
+
+            Log::info("Brevo Response Status: " . $response->status());
+            Log::info("Brevo Response Body: " . $response->body());
 
             if ($response->successful()) {
                 return ['success' => true];
