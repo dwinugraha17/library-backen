@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\Borrowing;
-use App\Services\FonnteService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -11,10 +10,11 @@ use App\Mail\BookReturnReminder;
 
 class SendWhatsAppReminders extends Command
 {
+    // Keeping signature same to avoid breaking schedule in console.php
     protected $signature = 'app:send-whatsapp-reminders';
-    protected $description = 'Send WhatsApp reminders for book returns';
+    protected $description = 'Send Email reminders for book returns (WhatsApp Disabled)';
 
-    public function handle(FonnteService $fonnte)
+    public function handle()
     {
         $reminders = [
             ['days' => 2, 'label' => 'H-2'],
@@ -29,27 +29,7 @@ class SendWhatsAppReminders extends Command
                 ->get();
 
             foreach ($borrowings as $borrow) {
-                // WhatsApp Reminder
-                $message = "Halo {$borrow->user->name},\n\n" 
-                    . "Ini adalah pengingat ({$rem['label']}) untuk mengembalikan buku:\n" 
-                    . "*{$borrow->book->title}*\n\n" 
-                    . "Batas waktu pengembalian adalah: " . Carbon::parse($borrow->return_date)->format('d M Y') . ".\n" 
-                    . "Terima kasih telah menggunakan UNILAM Library.";
-
-                $this->info("Attempting to send WhatsApp reminder to {$borrow->user->name} at {$borrow->user->phone_number} for {$borrow->book->title}");
-                \Illuminate\Support\Facades\Log::info("Attempting WA Reminder: To {$borrow->user->name} ({$borrow->user->phone_number}) for {$borrow->book->title}");
-
-                $response = $fonnte->sendMessage($borrow->user->phone_number, $message);
-
-                if (isset($response['status']) && $response['status']) {
-                    $this->info("Reminder sent to {$borrow->user->name} for {$borrow->book->title}");
-                    \Illuminate\Support\Facades\Log::info("WA Reminder Sent: To {$borrow->user->name} ({$borrow->user->phone_number})");
-                } else {
-                    $this->warn("Failed to send WhatsApp reminder to {$borrow->user->name}, but email will still be sent"); // Mengganti dari error menjadi warning
-                    \Illuminate\Support\Facades\Log::warning("WA Reminder Failed: To {$borrow->user->name}. Reason: " . json_encode($response)); // Mengganti dari error menjadi warning
-                }
-
-                // Email Reminder
+                // Email Reminder Only
                 if ($borrow->user->email) {
                     try {
                         Mail::to($borrow->user->email)->send(new BookReturnReminder($borrow, $rem['label']));

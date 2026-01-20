@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Borrowing;
-use App\Services\FonnteService;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BorrowSuccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class BorrowController extends Controller
 {
-    public function borrow(Request $request, FonnteService $fonnte)
+    public function borrow(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'book_id' => 'required|exists:books,id',
@@ -48,21 +48,16 @@ class BorrowController extends Controller
             return $borrowing;
         });
 
-        // Send WhatsApp Notification
+        // Send Email Notification
         try {
             $user = $request->user();
-            if ($user->phone_number) {
-                $message = "Halo {$user->name},\n\n" .
-                    "Peminjaman buku berhasil!\n" .
-                    "Judul: *{$book->title}*\n" .
-                    "Tanggal Pinjam: " . Carbon::parse($borrowing->borrow_date)->format('d M Y') . "\n" .
-                    "Batas Kembali: " . Carbon::parse($borrowing->return_date)->format('d M Y') . "\n\n" .
-                    "Terima kasih telah menggunakan UNILAM Library.";
-
-                $fonnte->sendMessage($user->phone_number, $message);
+            if ($user->email) {
+                // Ensure relationships are loaded for the email template
+                $borrowing->load(['user', 'book']);
+                Mail::to($user->email)->send(new BorrowSuccess($borrowing));
             }
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("Failed to send borrow notification: " . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error("Failed to send borrow email: " . $e->getMessage());
         }
 
         return response()->json($borrowing, 201);
