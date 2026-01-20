@@ -10,21 +10,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/ping', function() {
-    return response()->json(['message' => 'Web is working', 'time' => now()]);
-});
-
-Route::get('/test-brevo', function (\App\Services\BrevoService $brevo) {
-    $result = $brevo->sendEmail(
-        'chanddwi780@gmail.com',
-        'User Test',
-        'Test Email Brevo API',
-        '<h1>Berhasil!</h1><p>Ini adalah tes pengiriman email menggunakan Brevo API.</p>'
-    );
-    
-    return $result['success'] ? "Email Brevo Berhasil Dikirim!" : "Gagal Mengirim Email Brevo: " . $result['error'];
-});
-
 // Simple Admin Routes
 Route::prefix('simple-admin')->group(function () {
     Route::get('/login', [SimpleAdminController::class, 'loginForm'])->name('admin.login');
