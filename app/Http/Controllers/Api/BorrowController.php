@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Borrowing;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\BorrowSuccess;
+use App\Services\BrevoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class BorrowController extends Controller
 {
-    public function borrow(Request $request)
+    public function borrow(Request $request, BrevoService $brevo)
     {
         $validator = Validator::make($request->all(), [
             'book_id' => 'required|exists:books,id',
@@ -48,13 +48,33 @@ class BorrowController extends Controller
             return $borrowing;
         });
 
-        // Send Email Notification
+        // Send Email Notification via Brevo API
         try {
             $user = $request->user();
             if ($user->email) {
-                // Ensure relationships are loaded for the email template
-                $borrowing->load(['user', 'book']);
-                Mail::to($user->email)->send(new BorrowSuccess($borrowing));
+                $borrowDate = Carbon::parse($borrowing->borrow_date)->format('d M Y');
+                $returnDate = Carbon::parse($borrowing->return_date)->format('d M Y');
+                
+                $htmlContent = "
+                    <div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee;'>
+                        <h2 style='color: #2563EB;'>Peminjaman Berhasil!</h2>
+                        <p>Halo <strong>{$user->name}</strong>,</p>
+                        <p>Anda telah berhasil meminjam buku:</p>
+                        <ul style='list-style: none; padding: 0;'>
+                            <li><strong>Judul:</strong> {$book->title}</li>
+                            <li><strong>Tanggal Pinjam:</strong> {$borrowDate}</li>
+                            <li><strong>Batas Kembali:</strong> <span style='color: red;'>{$returnDate}</span></li>
+                        </ul>
+                        <p>Terima kasih telah menggunakan UNILAM Library.</p>
+                    </div>
+                ";
+
+                $brevo->sendEmail(
+                    $user->email, 
+                    $user->name, 
+                    "Peminjaman Berhasil: {$book->title}", 
+                    $htmlContent
+                );
             }
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error("Failed to send borrow email: " . $e->getMessage());

@@ -14,17 +14,15 @@ Route::get('/ping', function() {
     return response()->json(['message' => 'Web is working', 'time' => now()]);
 });
 
-Route::get('/test-resend', function () {
-    // Force route refresh
-    try {
-        Mail::raw('Halo! Ini adalah tes email menggunakan RESEND API dari UNILAM Library.', function ($message) {
-            $message->to('chanddwi780@gmail.com') // Diubah ke email terdaftar Resend
-                    ->subject('Test Resend Railway');
-        });
-        return "Resend Berhasil! Cek inbox Anda.";
-    } catch (\Exception $e) {
-        return "Resend Gagal: " . $e->getMessage();
-    }
+Route::get('/test-brevo', function (\App\Services\BrevoService $brevo) {
+    $result = $brevo->sendEmail(
+        'chanddwi780@gmail.com',
+        'User Test',
+        'Test Email Brevo API',
+        '<h1>Berhasil!</h1><p>Ini adalah tes pengiriman email menggunakan Brevo API.</p>'
+    );
+    
+    return $result ? "Email Brevo Berhasil Dikirim!" : "Gagal Mengirim Email Brevo.";
 });
 
 // Simple Admin Routes
