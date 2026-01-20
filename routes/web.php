@@ -28,6 +28,7 @@ Route::get('/debug-mail-config', function () {
         'encryption' => $smtp['encryption'] ?? 'null',
     ]);
 });
+});
 
 Route::get('/ping', function() {
     return response()->json(['message' => 'Web is working', 'time' => now()]);
